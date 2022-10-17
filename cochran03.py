@@ -12,12 +12,8 @@ def distance_between(a, b):
     return math.sqrt(x_difference * x_difference + y_difference * y_difference)
 
 def input_villages():
-    print("Enter the total number of villages: ", end = "")
-    village_count = int(input())
-    result = []
-    for i in range(village_count):
-        line = input()
-        result.append(village_string_to_list(line))
+    result = [[10, 39, 'mekelle'], [15, 21, 'wukro'], [20, 44, 'adigrat'], [40, 10, 'axum'], [56, 43, 'debre_damo']]
     return result
 
 villages = input_villages()
+print(villages)
