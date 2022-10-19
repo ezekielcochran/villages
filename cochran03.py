@@ -21,3 +21,4 @@ def input_villages(): # This is the part of the main branch I would like to keep
     return result # To here
 
 villages = input_villages()
+print(villages)
