@@ -1,3 +1,22 @@
+###################################
+# Student name: Ezekiel Cochran
+# Course: COSC 3523 Section 01 - Analysis of Algorithms
+# Assignment: #03 - Closest Villages
+# Filename: cochran03.py
+#
+# Purpose: Given a list of 2D points (Villages), find the pair that is closest together
+#
+# Assumptions: None known
+#
+# Limitations: Requires specific input: integer followed by lines of two floats and a string each
+# 
+# Development Computer: 2020 MacBook Pro
+# Operating System: macOS Monterey 12.0.1
+# Compiler:  none (python)
+# Integrated Development Environment (IDE): Visual Studio Code
+# Operational Status: Seems to work, needs testing and efficiency analysis
+###################################
+
 import math
 
 class Village:
@@ -16,7 +35,7 @@ class Pair:
         self.distance = distance_between(left, right)
     
     def __str__(self):
-        return "{} and {}, distance {}".format(self.first.name, self.second.name, self.distance)
+        return "{} and {}, distance {}".format(self.first, self.second, self.distance)
 
 def distance_between(a, b):
     x_difference = b.x - a.x
@@ -29,7 +48,7 @@ def input_villages():
     result = []
     for i in range(village_count):
         line = input().split()
-        result.append(Village(int(line[0]), int(line[1]), line[2]))
+        result.append(Village(float(line[0]), float(line[1]), line[2]))
     return result
 
 def pair_min(first, second):
@@ -56,8 +75,6 @@ def smallest_in_strip(strip, radius):
     if len(strip) < 2:
         return None
     best = Pair(strip[0], strip[1])
-    # for i in range(len(strip)): # DELETE THESE TWO LINES ONCE WE KNOW THE ALTERNATIVE WORKS
-    #     for j in range(i + 1, min(7, len(strip))):
     for i in range(len(strip)):
         j = i + 1
         while j < len(strip) and strip[j].y - strip[i].y < radius:
@@ -84,14 +101,12 @@ def recursive_find(li, ri):
         strip = build_strip(villages[mi].x, sides_min.distance, li, ri + 1)
         strip_best = smallest_in_strip(strip, sides_min.distance)
         return pair_min(sides_min, strip_best)
-        
-def prebuilt_villages():
-    result = [Village(10, 39, 'mekelle'), Village(15, 21, 'wukro'), Village(20, 44, 'adigrat'), Village(40, 10, 'axum'), Village(56, 43, 'debre_damo')]
-    # result = [Village(0, 0, 'A'), Village(3, 3, 'B'), Village(6, 7, 'C'), Village(8, 0, 'D'), Village(11, 6, 'E'), Village(0, 7, 'F')]
-    return result
 
+MAXIMUM_DISTANCE = 1200
 villages = input_villages()
 villages.sort(key = lambda v: v.x)
-
-hail_mary = recursive_find(0, len(villages) - 1)
-print(hail_mary)
+solution = recursive_find(0, len(villages) - 1)
+if solution.distance <= MAXIMUM_DISTANCE:
+    print(solution)
+else:
+    print("Infeasible")
