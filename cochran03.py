@@ -1,4 +1,7 @@
 import math
+import time
+import random
+from tkinter.tix import MAX
 
 class Village:
     def __init__(self, x, y, name):
@@ -10,13 +13,23 @@ class Village:
         return self.name
 
 class Pair:
-    def __init__(self, left, right):
-        self.first = left
-        self.second = right
-        self.distance = distance_between(left, right)
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+        self.distance = distance_between(first, second)
     
     def __str__(self):
         return "{} and {}, distance {}".format(self.first.name, self.second.name, self.distance)
+
+class Space:
+    def __init__(self, min_x, max_x, min_y, max_y):
+        self.min_x = min_x
+        self.max_x = max_x
+        self.min_y = min_y
+        self.max_y = max_y
+    
+    def __str__(self):
+        return "x between {} and {}, y between {} and {}".format(self.min_x, self.max_x, self.min_y, self.max_y)
 
 def distance_between(a, b):
     x_difference = b.x - a.x
@@ -29,7 +42,7 @@ def input_villages():
     result = []
     for i in range(village_count):
         line = input().split()
-        result.append(Village(int(line[0]), int(line[1]), line[2]))
+        result.append(Village(float(line[0]), float(line[1]), line[2]))
     return result
 
 def pair_min(first, second):
@@ -90,8 +103,64 @@ def prebuilt_villages():
     # result = [Village(0, 0, 'A'), Village(3, 3, 'B'), Village(6, 7, 'C'), Village(8, 0, 'D'), Village(11, 6, 'E'), Village(0, 7, 'F')]
     return result
 
-villages = input_villages()
-villages.sort(key = lambda v: v.x)
+def class_brute():
+    min = Pair(villages[0], villages[1])
+    for first in villages:
+        for second in villages[villages.index(first) + 1::]:
+            this = Pair(first, second)
+            if this.distance < min.distance:
+                min = this
+    return min
 
-hail_mary = recursive_find(0, len(villages) - 1)
-print(hail_mary)
+def verify(tent):
+    check = class_brute()
+    if check.distance != tent.distance:
+        return False
+    if check.first == tent.first and check.second == tent.second:
+        return True
+    if check.first == tent.second and check.second == tent.first:
+        return True
+    return False
+
+def build(num_points, s):
+    result = []
+    for i in range(num_points):
+        this = Village(random.uniform(s.min_x, s.max_x), random.uniform(s.min_y, s.max_y), "city " + str(i))
+        result.append(this)
+    return result
+
+village_count = 10000
+
+random.seed(1)
+
+MAXIMUM_DISTANCE = 1200
+continent = Space(0, MAXIMUM_DISTANCE, 0, MAXIMUM_DISTANCE)
+# villages = build(village_count, continent)
+# villages = input_villages()
+# start_time = time.time_ns()
+# villages.sort(key = lambda v: v.x)
+# fast_answer = recursive_find(0, len(villages) - 1)
+# end_time = time.time_ns()
+# runtime = (end_time - start_time) / 1000000000
+# print("\nFast answer: {}".format(fast_answer), end = "\t\t\t")
+# print("Runtime:     {}".format(runtime))
+# start_time = time.time_ns()
+# print("Verify:      {}".format(class_brute()), end = "\t\t\t")
+# end_time = time.time_ns()
+# runtime = (end_time - start_time) / 1000000000
+# print("Verify time: {}\n".format(runtime))
+
+output = open("runtimes.txt", "w")
+for i in range(100, 2001, 10):
+    print(i, end = "\t")
+    villages = build(i, continent)
+    start_time = time.time_ns()
+    villages.sort(key = lambda x:x.x)
+    fast_answer = recursive_find(0, len(villages) - 1)
+    print(fast_answer, end = "\t")
+    print(verify(fast_answer), end = "\t")
+    end_time = time.time_ns()
+    runtime = (end_time - start_time) / 1000000000
+    print(runtime)
+    output.write("{}, {}, {}\n".format(i, verify(fast_answer), runtime))
+output.close()
