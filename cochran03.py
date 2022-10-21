@@ -1,7 +1,6 @@
 import math
 import time
 import random
-from tkinter.tix import MAX
 
 class Village:
     def __init__(self, x, y, name):
@@ -150,17 +149,28 @@ continent = Space(0, MAXIMUM_DISTANCE, 0, MAXIMUM_DISTANCE)
 # runtime = (end_time - start_time) / 1000000000
 # print("Verify time: {}\n".format(runtime))
 
-output = open("runtimes.txt", "w")
-for i in range(100, 2001, 10):
+results_filename = "runtimes.txt"
+# all_true = True
+output = open(results_filename, "w")
+for i in range(100, 300001, 10000):
     print(i, end = "\t")
     villages = build(i, continent)
     start_time = time.time_ns()
     villages.sort(key = lambda x:x.x)
     fast_answer = recursive_find(0, len(villages) - 1)
     print(fast_answer, end = "\t")
-    print(verify(fast_answer), end = "\t")
     end_time = time.time_ns()
     runtime = (end_time - start_time) / 1000000000
+    # brute_start = time.time_ns()
+    # verified = verify(fast_answer)
+    # brute_end = time.time_ns()
+    # brute_runtime = (brute_end - brute_start) / 1000000000
+    # if not verified:
+        # all_true = False
+    # print(verified, end = "\t")
     print(runtime)
-    output.write("{}, {}, {}\n".format(i, verify(fast_answer), runtime))
+    # output.write("{}, {}, {}\n".format(i, runtime, brute_runtime))
+    output.write("{}, {}\n".format(i, runtime))
 output.close()
+# print("\nAll searches were correct: {}\nResults written to \"{}\"".format(all_true, results_filename))
+print("\nResults unchecked\nResults written to \"{}\"".format(results_filename))
