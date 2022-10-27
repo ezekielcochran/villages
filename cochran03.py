@@ -14,7 +14,7 @@
 # Operating System: macOS Monterey 12.0.1
 # Compiler:  none (python)
 # Integrated Development Environment (IDE): Visual Studio Code
-# Operational Status: Seems to work, needs testing and efficiency analysis
+# Operational Status: Working
 ###################################
 
 import math
