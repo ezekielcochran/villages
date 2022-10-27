@@ -29,13 +29,23 @@ class Village:
         return self.name
 
 class Pair:
-    def __init__(self, left, right):
-        self.first = left
-        self.second = right
-        self.distance = distance_between(left, right)
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+        self.distance = distance_between(first, second)
     
     def __str__(self):
         return "{} and {}, distance {}".format(self.first, self.second, self.distance)
+
+class Space:
+    def __init__(self, min_x, max_x, min_y, max_y):
+        self.min_x = min_x
+        self.max_x = max_x
+        self.min_y = min_y
+        self.max_y = max_y
+    
+    def __str__(self):
+        return "x between {} and {}, y between {} and {}".format(self.min_x, self.max_x, self.min_y, self.max_y)
 
 def distance_between(a, b):
     x_difference = b.x - a.x
