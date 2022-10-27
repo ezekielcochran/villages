@@ -28,26 +28,16 @@ class Village:
     def __str__(self):
         return self.name
 
-class Pair:
+class Pair: #This is where the distance calculation is actually performed, "distance_between" is never directly called elsewhere
     def __init__(self, first, second):
         self.first = first
         self.second = second
         self.distance = distance_between(first, second)
     
     def __str__(self):
-        return "{} and {}, distance {}".format(self.first, self.second, self.distance)
+        return "{} and {} are closest with a distance of {:.5f}".format(self.first, self.second, self.distance)
 
-class Space:
-    def __init__(self, min_x, max_x, min_y, max_y):
-        self.min_x = min_x
-        self.max_x = max_x
-        self.min_y = min_y
-        self.max_y = max_y
-    
-    def __str__(self):
-        return "x between {} and {}, y between {} and {}".format(self.min_x, self.max_x, self.min_y, self.max_y)
-
-def distance_between(a, b):
+def distance_between(a, b): #We could theoretically save a little bit of computation by returning the square of the distance instead of the actual distance, comparing those instead, and only square rooting the final result as we output
     x_difference = b.x - a.x
     y_difference = b.y - a.y
     return math.sqrt(x_difference * x_difference + y_difference * y_difference)
@@ -61,7 +51,7 @@ def input_villages():
         result.append(Village(float(line[0]), float(line[1]), line[2]))
     return result
 
-def pair_min(first, second):
+def pair_min(first, second): #Takes and returns Pair objects, if both are None it returns None
     if first == None:
         return second
     if second == None:
@@ -71,7 +61,7 @@ def pair_min(first, second):
     else:
         return first
 
-def build_strip(center_x, radius, lower, upper):
+def build_strip(center_x, radius, lower, upper): #We use lower and upper bounds here, because our strip is within the range of whichever recursive call we are at and we don't want to check the entire list of villages
     low = center_x - radius
     high = center_x + radius
     center_points = []
@@ -97,25 +87,24 @@ def smallest_in_strip(strip, radius):
     return best
 
 def recursive_find(li, ri):
-    if ri == -1:
+    if ri == -1: #This is one base case, where there are no villages to begin with
         return "There are no villages"
-    if li + 1 == ri:
+    if li + 1 == ri: #This is a more common base case, where we are only looking at two points
         return Pair(villages[li], villages[ri])
-    elif (li == ri):
+    if (li == ri): #The last base case, where we are only looking at one point
         return None
-    else:
-        mi = (li + ri) // 2
-        left_min = recursive_find(li, mi)
-        right_min = recursive_find(mi + 1, ri)
-        sides_min = pair_min(left_min, right_min)
-        strip = build_strip(villages[mi].x, sides_min.distance, li, ri + 1)
-        strip_best = smallest_in_strip(strip, sides_min.distance)
-        return pair_min(sides_min, strip_best)
+    mi = (li + ri) // 2
+    left_min = recursive_find(li, mi)
+    right_min = recursive_find(mi + 1, ri)
+    sides_min = pair_min(left_min, right_min)
+    strip = build_strip(villages[mi].x, sides_min.distance, li, ri + 1) # Strip is a list of Village objects, and is sorted by y value
+    strip_best = smallest_in_strip(strip, sides_min.distance)
+    return pair_min(sides_min, strip_best)
 
 MAXIMUM_DISTANCE = 1200
 villages = input_villages()
 villages.sort(key = lambda v: v.x)
-solution = recursive_find(0, len(villages) - 1)
+solution = recursive_find(0, len(villages) - 1) # Solution is a Pair object, unless no villages are inputted, in which case it returns the appropriate string
 if solution.distance <= MAXIMUM_DISTANCE:
     print(solution)
 else:
